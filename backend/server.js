@@ -110,7 +110,7 @@ app.patch('/api/leads/:id', (req, res) => {
 
 /* ── ADMIN DASHBOARD ────────────────────── */
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+  res.sendFile(path.join(__dirname, '_admin.html'));
 });
 
 /* ── CATCH-ALL: serve index.html ────────── */
