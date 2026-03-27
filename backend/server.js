@@ -13,6 +13,7 @@ const { sendOwnerAlert }       = require('./alerts');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+console.log('Frontend path:', path.join(__dirname, '..'));
 
 /* ── MIDDLEWARE ─────────────────────────── */
 app.use(helmet({ contentSecurityPolicy: false }));
@@ -27,7 +28,8 @@ const quoteLimiter = rateLimit({
 });
 
 /* ── SERVE STATIC FRONTEND ──────────────── */
-app.use(express.static(path.join(__dirname, '..')));
+const frontendPath = path.join(__dirname, '..');
+app.use(express.static(frontendPath));
 
 /* ── API: SUBMIT QUOTE ──────────────────── */
 app.post('/api/quote', quoteLimiter, async (req, res) => {
@@ -105,7 +107,7 @@ app.patch('/api/leads/:id', (req, res) => {
 
 /* ── CATCH-ALL: serve index.html ────────── */
 app.get('*', (req, res) => {
-res.sendFile(path.resolve(__dirname + '/../index.html'));
+res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 /* ── START ──────────────────────────────── */
