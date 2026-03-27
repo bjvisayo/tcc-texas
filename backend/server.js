@@ -110,11 +110,11 @@ app.patch('/api/leads/:id', (req, res) => {
 
 /* ── ADMIN DASHBOARD ────────────────────── */
 app.get('/admin', (req, res) => {
+  const fs = require('fs');
   const adminPath = require('path').resolve(__dirname, '_admin.html');
-  console.log('Admin path:', adminPath);
+  console.log('File exists:', fs.existsSync(adminPath));
   res.sendFile(adminPath);
 });
-
 /* ── CATCH-ALL: serve index.html ────────── */
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
