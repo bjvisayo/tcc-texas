@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TCC Texas — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #E8A020; --gold-light: #F5C040;
+      --dark: #0A0C0E; --dark2: #111418; --dark3: #1A1F26;
+      --steel: #2A3340; --muted: #6B7A8D; --light: #EEF0F2; --white: #fff;
+      --green: #22c55e; --red: #ef4444; --blue: #3b82f6; --purple: #a855f7;
+    }
+    body { font-family: 'Barlow', sans-serif; background: var(--dark); color: var(--light); min-height: 100vh; }
+
+    /* LOGIN */
+    #loginScreen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: var(--dark);
+    }
+    .login-box {
+      background: var(--dark2); border: 1px solid rgba(232,160,32,0.2);
+      padding: 48px 40px; width: 100%; max-width: 400px; position: relative;
+    }
+    .login-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    .login-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; color: var(--white); margin-bottom: 4px; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 32px; }
+    .login-label { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .login-input {
+      width: 100%; background: var(--dark3); border: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 16px; color: var(--white); font-family: 'Barlow', sans-serif;
+      font-size: 1rem; outline: none; margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: var(--gold); }
+    .login-btn {
+      width: 100%; background: var(--gold); color: var(--dark); border: none;
+      padding: 14px; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+      transition: background 0.2s;
+    }
+    .login-btn:hover { background: var(--gold-light); }
+    .login-error { color: var(--red); font-size: 0.82rem; margin-top: 12px; text-align: center; display: none; }
+
+    /* DASHBOARD */
+    #dashboard { display: none; }
+
+    /* TOPBAR */
+    .topbar {
+      background: var(--dark2); border-bottom: 1px solid rgba(232,160,32,0.15);
+      padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: var(--white); }
+    .topbar-logo span { color: var(--gold); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-badge { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); color: var(--green); padding: 4px 12px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; }
+    .logout-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--muted);
+      padding: 6px 16px; font-family: 'Barlow', sans-serif; font-size: 0.8rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* MAIN LAYOUT */
+    .main { max-width: 1400px; margin: 0 auto; padding: 32px; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: var(--dark2); border: 1px solid rgba(255,255,255,0.05);
+      padding: 24px 28px; position: relative; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(232,160,32,0.2); }
+    .stat-card-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .stat-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; line-height: 1; color: var(--white); }
+    .stat-card-num.gold { color: var(--gold); }
+    .stat-card-num.green { color: var(--green); }
+    .stat-card-num.blue { color: var(--blue); }
+    .stat-card-num.purple { color: var(--purple); }
+    .stat-card-icon { position: absolute; top: 16px; right: 20px; font-size: 2rem; opacity: 0.15; }
+
+    /* TOOLBAR */
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+    }
+    .toolbar-left { display: flex; gap: 10px; flex-wrap: wrap; }
+    .filter-btn {
+      background: var(--dark3); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted); padding: 8px 18px; font-family: 'Barlow', sans-serif;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+    .search-input {
+      background: var(--dark3); border: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 16px; color: var(--white); font-family: 'Barlow', sans-serif;
+      font-size: 0.88rem; outline: none; width: 240px; transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--gold); }
+    .search-input::placeholder { color: var(--muted); }
+    .refresh-btn {
+      background: var(--dark3); border: 1px solid rgba(232,160,32,0.2);
+      color: var(--gold); padding: 8px 18px; font-family: 'Barlow', sans-serif;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .refresh-btn:hover { background: rgba(232,160,32,0.1); }
+
+    /* TABLE */
+    .table-wrap {
+      background: var(--dark2); border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .table-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 1px; color: var(--white); }
+    .table-count { font-size: 0.78rem; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--dark3); padding: 12px 20px; text-align: left;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: rgba(232,160,32,0.04); }
+    tbody td { padding: 14px 20px; font-size: 0.88rem; color: var(--light); vertical-align: middle; }
+    .td-name { font-weight: 600; color: var(--white); }
+    .td-phone a { color: var(--gold); text-decoration: none; }
+    .td-phone a:hover { text-decoration: underline; }
+    .td-service { font-size: 0.8rem; }
+    .td-date { font-size: 0.78rem; color: var(--muted); }
+    .td-message { font-size: 0.8rem; color: var(--muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-block; padding: 3px 10px; font-size: 0.68rem;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .status-new       { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+    .status-contacted { background: rgba(232,160,32,0.12); color: var(--gold); border: 1px solid rgba(232,160,32,0.2); }
+    .status-quoted    { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.2); }
+    .status-won       { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+    .status-lost      { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+
+    /* STATUS SELECT */
+    .status-select {
+      background: var(--dark3); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--light); font-family: 'Barlow', sans-serif; font-size: 0.78rem;
+      padding: 4px 8px; outline: none; cursor: pointer;
+    }
+    .status-select:focus { border-color: var(--gold); }
+
+    /* EMPTY STATE */
+    .empty-state { padding: 60px; text-align: center; color: var(--muted); }
+    .empty-state div { font-size: 3rem; margin-bottom: 16px; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* LOADING */
+    .loading { padding: 40px; text-align: center; color: var(--muted); font-size: 0.88rem; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      background: var(--dark3); border: 1px solid rgba(232,160,32,0.3);
+      padding: 14px 20px; font-size: 0.85rem; color: var(--white);
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s; pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error   { border-color: rgba(239,68,68,0.3); }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .main { padding: 16px; }
+      table { font-size: 0.8rem; }
+      thead th, tbody td { padding: 10px 12px; }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">TCC <span>Texas</span></div>
+    <div class="login-sub">Admin Dashboard — Authorized Access Only</div>
+    <label class="login-label">Admin Password</label>
+    <input type="password" class="login-input" id="adminKeyInput" placeholder="Enter admin key..." />
+    <button class="login-btn" onclick="login()">→ Access Dashboard</button>
+    <div class="login-error" id="loginError">❌ Invalid admin key. Try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">TCC <span>Texas</span> <span style="font-size:0.9rem;color:var(--muted);font-family:'Barlow',sans-serif;font-weight:400;letter-spacing:0"> · Admin</span></div>
+    <div class="topbar-right">
+      <div class="topbar-badge">● Live</div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-card-label">Total Leads</div>
+        <div class="stat-card-num gold" id="statTotal">—</div>
+        <div class="stat-card-icon">📋</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">New Leads</div>
+        <div class="stat-card-num blue" id="statNew">—</div>
+        <div class="stat-card-icon">🆕</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Won Jobs</div>
+        <div class="stat-card-num green" id="statWon">—</div>
+        <div class="stat-card-icon">✅</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">In Progress</div>
+        <div class="stat-card-num purple" id="statProgress">—</div>
+        <div class="stat-card-icon">⚡</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('new', this)">New</button>
+        <button class="filter-btn" onclick="setFilter('contacted', this)">Contacted</button>
+        <button class="filter-btn" onclick="setFilter('quoted', this)">Quoted</button>
+        <button class="filter-btn" onclick="setFilter('won', this)">Won</button>
+        <button class="filter-btn" onclick="setFilter('lost', this)">Lost</button>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search leads..." oninput="renderTable()" />
+        <button class="refresh-btn" onclick="loadLeads()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-title">Lead Pipeline</div>
+        <div class="table-count" id="tableCount"></div>
+      </div>
+      <div id="tableBody">
+        <div class="loading">Loading leads...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let allLeads   = [];
+  let adminKey   = '';
+  let filterStatus = 'all';
+
+  /* ── AUTH ─────────────────────────── */
+  function login() {
+    const key = document.getElementById('adminKeyInput').value.trim();
+    if (!key) return;
+    adminKey = key;
+    loadLeads().then(ok => {
+      if (ok) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display   = 'block';
+        sessionStorage.setItem('adminKey', key);
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+        adminKey = '';
+      }
+    });
+  }
+
+  function logout() {
+    sessionStorage.removeItem('adminKey');
+    adminKey = '';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').style.display   = 'none';
+    document.getElementById('adminKeyInput').value = '';
+  }
+
+  // Auto-login if key stored in session
+  window.addEventListener('load', () => {
+    const saved = sessionStorage.getItem('adminKey');
+    if (saved) {
+      adminKey = saved;
+      loadLeads().then(ok => {
+        if (ok) {
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('dashboard').style.display   = 'block';
+        } else {
+          sessionStorage.removeItem('adminKey');
+          adminKey = '';
+        }
+      });
+    }
+    // Enter key on login
+    document.getElementById('adminKeyInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') login();
+    });
+  });
+
+  /* ── LOAD LEADS ───────────────────── */
+  async function loadLeads() {
+    try {
+      const res  = await fetch('/api/leads', { headers: { 'x-admin-key': adminKey } });
+      if (!res.ok) return false;
+      const data = await res.json();
+      allLeads   = data.leads || [];
+      updateStats();
+      renderTable();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /* ── STATS ────────────────────────── */
+  function updateStats() {
+    document.getElementById('statTotal').textContent    = allLeads.length;
+    document.getElementById('statNew').textContent      = allLeads.filter(l => l.status === 'new').length;
+    document.getElementById('statWon').textContent      = allLeads.filter(l => l.status === 'won').length;
+    document.getElementById('statProgress').textContent = allLeads.filter(l => ['contacted','quoted'].includes(l.status)).length;
+  }
+
+  /* ── FILTER ───────────────────────── */
+  function setFilter(status, btn) {
+    filterStatus = status;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  /* ── RENDER TABLE ─────────────────── */
+  function renderTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    let leads = allLeads;
+
+    if (filterStatus !== 'all') leads = leads.filter(l => l.status === filterStatus);
+    if (search) leads = leads.filter(l =>
+      [l.first_name, l.last_name, l.phone, l.email, l.service, l.message]
+        .join(' ').toLowerCase().includes(search)
+    );
+
+    document.getElementById('tableCount').textContent = `${leads.length} lead${leads.length !== 1 ? 's' : ''}`;
+
+    if (!leads.length) {
+      document.getElementById('tableBody').innerHTML = `
+        <div class="empty-state">
+          <div>📭</div>
+          <p>No leads found</p>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('tableBody').innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Service</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${leads.map(lead => `
+            <tr>
+              <td style="color:var(--muted);font-size:0.78rem">#${lead.id}</td>
+              <td class="td-name">${lead.first_name} ${lead.last_name || ''}</td>
+              <td class="td-phone"><a href="tel:${lead.phone}">${lead.phone}</a></td>
+              <td style="color:var(--muted);font-size:0.8rem">${lead.email || '—'}</td>
+              <td class="td-service">${lead.service}</td>
+              <td class="td-message" title="${lead.message || ''}">${lead.message || '—'}</td>
+              <td class="td-date">${formatDate(lead.created_at)}</td>
+              <td>
+                <select class="status-select" onchange="updateStatus(${lead.id}, this.value)">
+                  ${['new','contacted','quoted','won','lost'].map(s =>
+                    `<option value="${s}" ${lead.status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`
+                  ).join('')}
+                </select>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  /* ── UPDATE STATUS ────────────────── */
+  async function updateStatus(id, status) {
+    try {
+      const res = await fetch(`/api/leads/${id}`, {
+        method : 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+        body   : JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        const lead = allLeads.find(l => l.id === id);
+        if (lead) lead.status = status;
+        updateStats();
+        showToast(`✅ Lead #${id} marked as ${status}`, 'success');
+      }
+    } catch {
+      showToast('❌ Failed to update status', 'error');
+    }
+  }
+
+  /* ── HELPERS ──────────────────────── */
+  function formatDate(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+      ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent  = msg;
+    t.className    = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // Auto-refresh every 60 seconds
+  setInterval(() => { if (adminKey) loadLeads(); }, 60000);
+</script>
+</body>
+</html>
