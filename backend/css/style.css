@@ -506,3 +506,43 @@ footer {
   .gallery-grid { grid-template-columns: 1fr; }
   .gallery-item { height: 220px; }
 }
+
+/* ── FLATICON UICONS ─────────────────────── */
+.fi {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Nav icon */
+.nav-cta .fi { font-size: 0.85rem; margin-right: 6px; }
+
+/* Hero badge icon */
+.hero-badge .fi { font-size: 0.8rem; }
+
+/* Form trust icon */
+.form-trust .fi { font-size: 0.85rem; margin-right: 4px; color: var(--gold); }
+
+/* Trust bar icons */
+.trust-item .fi { font-size: 1.1rem; color: var(--gold); }
+
+/* Service icons */
+.service-icon {
+  font-size: 2.2rem !important;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* Footer contact icons */
+.footer-contact-icon {
+  font-size: 1rem;
+  color: var(--gold);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+/* CTA button icons */
+.cta-btn-primary .fi,
+.cta-btn-outline .fi { font-size: 0.9rem; margin-right: 6px; }

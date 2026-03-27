@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TCC Texas — Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css" />
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -196,6 +198,12 @@
       .toolbar { flex-direction: column; align-items: stretch; }
       .search-input { width: 100%; }
     }
+    /* Flaticon icons */
+    .fi { display: inline-flex; align-items: center; vertical-align: middle; line-height: 1; }
+    .stat-card-icon .fi { font-size: 2rem; }
+    .refresh-btn .fi { font-size: 0.85rem; margin-right: 4px; }
+    .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 4px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   </style>
 </head>
 <body>
@@ -219,7 +227,7 @@
   <div class="topbar">
     <div class="topbar-logo">TCC <span>Texas</span> <span style="font-size:0.9rem;color:var(--muted);font-family:'Barlow',sans-serif;font-weight:400;letter-spacing:0"> · Admin</span></div>
     <div class="topbar-right">
-      <div class="topbar-badge">● Live</div>
+      <div class="topbar-badge"><span class="live-dot"></span> Live</div>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
   </div>
@@ -231,22 +239,22 @@
       <div class="stat-card">
         <div class="stat-card-label">Total Leads</div>
         <div class="stat-card-num gold" id="statTotal">—</div>
-        <div class="stat-card-icon">📋</div>
+        <div class="stat-card-icon"><i class="fi fi-rr-clipboard-list"></i></div>
       </div>
       <div class="stat-card">
         <div class="stat-card-label">New Leads</div>
         <div class="stat-card-num blue" id="statNew">—</div>
-        <div class="stat-card-icon">🆕</div>
+        <div class="stat-card-icon"><i class="fi fi-rr-user-add"></i></div>
       </div>
       <div class="stat-card">
         <div class="stat-card-label">Won Jobs</div>
         <div class="stat-card-num green" id="statWon">—</div>
-        <div class="stat-card-icon">✅</div>
+        <div class="stat-card-icon"><i class="fi fi-rr-badge-check"></i></div>
       </div>
       <div class="stat-card">
         <div class="stat-card-label">In Progress</div>
         <div class="stat-card-num purple" id="statProgress">—</div>
-        <div class="stat-card-icon">⚡</div>
+        <div class="stat-card-icon"><i class="fi fi-rr-bolt"></i></div>
       </div>
     </div>
 
@@ -261,8 +269,8 @@
         <button class="filter-btn" onclick="setFilter('lost', this)">Lost</button>
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search leads..." oninput="renderTable()" />
-        <button class="refresh-btn" onclick="loadLeads()">↻ Refresh</button>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search leads..." oninput="renderTable()" />
+        <button class="refresh-btn" onclick="loadLeads()"><i class="fi fi-rr-rotate-right"></i> Refresh</button>
       </div>
     </div>
 
@@ -381,7 +389,7 @@
     if (!leads.length) {
       document.getElementById('tableBody').innerHTML = `
         <div class="empty-state">
-          <div>📭</div>
+          <div><i class="fi fi-rr-inbox" style="font-size:3rem;color:var(--muted)"></i></div>
           <p>No leads found</p>
         </div>`;
       return;
@@ -436,7 +444,7 @@
         const lead = allLeads.find(l => l.id === id);
         if (lead) lead.status = status;
         updateStats();
-        showToast(`✅ Lead #${id} marked as ${status}`, 'success');
+        showToast(`Lead #${id} marked as ${status}`, 'success');
       }
     } catch {
       showToast('❌ Failed to update status', 'error');
