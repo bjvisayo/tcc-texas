@@ -108,14 +108,14 @@ app.patch('/api/leads/:id', (req, res) => {
   res.json({ success: true });
 });
 
-/* ── CATCH-ALL: serve index.html ────────── */
-app.get('*', (req, res) => {
-res.sendFile(path.join(__dirname, 'index.html'));
-});
-
 /* ── ADMIN DASHBOARD ────────────────────── */
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+/* ── CATCH-ALL: serve index.html ────────── */
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* ── START ──────────────────────────────── */
