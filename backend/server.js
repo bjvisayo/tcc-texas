@@ -28,7 +28,7 @@ const quoteLimiter = rateLimit({
 });
 
 /* ── SERVE STATIC FRONTEND ──────────────── */
-const frontendPath = path.join(__dirname, '..');
+const frontendPath = path.join(__dirname);
 app.use(express.static(frontendPath));
 
 /* ── API: SUBMIT QUOTE ──────────────────── */
@@ -107,7 +107,7 @@ app.patch('/api/leads/:id', (req, res) => {
 
 /* ── CATCH-ALL: serve index.html ────────── */
 app.get('*', (req, res) => {
-res.sendFile(path.join(frontendPath, 'index.html'));
+res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* ── START ──────────────────────────────── */
