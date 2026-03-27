@@ -17,6 +17,7 @@ console.log('Frontend path:', path.join(__dirname, '..'));
 
 /* ── MIDDLEWARE ─────────────────────────── */
 app.use(helmet({ contentSecurityPolicy: false }));
+app.set('trust proxy', 1);
 app.use(cors());
 app.use(express.json());
 
@@ -67,9 +68,11 @@ app.post('/api/quote', quoteLimiter, async (req, res) => {
     );
 
     // 3. Send WhatsApp / SMS alert (non-blocking)
-    sendOwnerAlert(lead).catch(err =>
-      console.error('❌ Alert error:', err.message)
-    );
+if (process.env.TWILIO_ACCOUNT_SID) {
+  sendOwnerAlert(lead).catch(err =>
+    console.error('❌ Alert error:', err.message)
+  );
+}
 
     return res.json({ success: true, message: 'Quote request received!', id: leadId });
 
