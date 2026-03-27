@@ -110,7 +110,9 @@ app.patch('/api/leads/:id', (req, res) => {
 
 /* ── ADMIN DASHBOARD ────────────────────── */
 app.get('/admin', (req, res) => {
-  res.send('<h1 style="color:red">ADMIN ROUTE HIT</h1>');
+  const adminPath = require('path').resolve(__dirname, '_admin.html');
+  console.log('Admin path:', adminPath);
+  res.sendFile(adminPath);
 });
 
 /* ── CATCH-ALL: serve index.html ────────── */
