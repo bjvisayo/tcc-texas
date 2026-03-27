@@ -14,7 +14,7 @@ async function sendOwnerAlert(lead) {
 
   const payload = JSON.stringify({
     to     : process.env.TERMII_TO,
-    from   : 'TCC Texas',
+    from   : 'N-Alert',
     sms    : message,
     type   : 'plain',
     api_key: process.env.TERMII_API_KEY,
