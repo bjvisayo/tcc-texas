@@ -68,7 +68,7 @@ app.post('/api/quote', quoteLimiter, async (req, res) => {
     );
 
     // 3. Send WhatsApp / SMS alert (non-blocking)
-if (process.env.TWILIO_ACCOUNT_SID) {
+if (process.env.TERMII_API_KEY) {
   sendOwnerAlert(lead).catch(err =>
     console.error('❌ Alert error:', err.message)
   );
