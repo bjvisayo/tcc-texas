@@ -6,19 +6,18 @@ async function sendOwnerAlert(lead) {
   const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   const message =
-    `🚛 NEW LEAD - TCC Texas\n` +
+    `NEW LEAD - TCC Texas\n` +
     `Name: ${fullName}\n` +
     `Phone: ${phone}\n` +
-    `Service: ${service}\n` +
-    `Time: ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT`;
+    `Service: ${service}`;
 
   const payload = JSON.stringify({
-    to     : process.env.TERMII_TO,
-    from   : 'N-Alert',
-    sms    : message,
-    type   : 'plain',
-    api_key: process.env.TERMII_API_KEY,
-    channel: 'generic',
+    to      : process.env.TERMII_TO,
+    from    : 'talert',
+    sms     : message,
+    type    : 'plain',
+    api_key : process.env.TERMII_API_KEY,
+    channel : 'dnd',
   });
 
   return new Promise((resolve, reject) => {
@@ -34,7 +33,7 @@ async function sendOwnerAlert(lead) {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
-        console.log('📱 Alert sent:', data);
+        console.log('📱 Alert response:', data);
         resolve(data);
       });
     });
