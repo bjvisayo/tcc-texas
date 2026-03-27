@@ -113,6 +113,11 @@ app.get('*', (req, res) => {
 res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+/* ── ADMIN DASHBOARD ────────────────────── */
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 /* ── START ──────────────────────────────── */
 initDB().then(() => {
   app.listen(PORT, () => {
