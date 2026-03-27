@@ -113,6 +113,8 @@ app.get('/admin', (req, res) => {
   const fs = require('fs');
   const adminPath = require('path').resolve(__dirname, '_admin.html');
   const html = fs.readFileSync(adminPath, 'utf8');
+  console.log('File size:', html.length);
+  console.log('First 200 chars:', html.substring(0, 200));
   res.setHeader('Content-Type', 'text/html');
   res.send(html);
 });
